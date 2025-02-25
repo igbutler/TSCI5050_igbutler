@@ -41,30 +41,40 @@ whatisthis <- function(xx){
                               ,typeof=typeof(xx)))};
 #
 # import data ----
-DataFile0 <- "Data/R test data.xlsx"
-Dat0 <- import(DataFile0)
-Dat0[1,]#Take the 1st row of the data set
-Dat0[1,2]#Row 1, Column 2
-Dat0[1,2:5]#Row 1, Columns 2 through 5
-Dat0[1,c(2,2)]#Row 1 repeats Column 2 twice #c command is helpful for nonsequential numbers 
-Dat0[c(1,1)]# Row 1 twice, all columns
-Dat0[rep(1,6)]#Row 1, repeated 6 times, All Cols #Rep command is helpful for repeating large amounts of data
-mutate(Dat0)
-mutate(Dat0,'CD4 ABS'=c(12,15))
-set.seed(seed) #To replicate the same vector of random numbers, set the set seed function where seed was previously defined on line 26
-rnorm(200, mean = 900, sd = 250)
+datafile0 <- "Data/R test data.xlsx"
+Dat0 <- import(datafile0)
+Dat0[1,] #Take the 1st row of the data set
+Dat0[1,2] #Row 1, Col 2
+Dat0[1,2:5] #Row 1, Cols 2 through 5
+Dat0[1,c(2,5)] #Row 1, Cols 2 and 5 #C command is helpful for non-sequential data
+Dat0[c(1,1),]#Row 1 twice, All Cols
+Dat0[rep(1,6),] #Row 1, repeated 6 times, All Cols 
+#Rep command is helpful for repeating large amounts of data as the c command must be manually input
 
-Dat0[rep(1,nrows),]
-Dat1 <- Dat0[rep(1,nrows),]
-#mutate(Dat1, 'CD4 ABS' =12)
-#mutate(Dat1,'CD4 ABS'=rnorm(200, mean = 900, sd = 250))
-mutate(Dat1,'CD4 ABS'=rnorm(n(), mean = 900, sd = 250))#n() is the number of rows in the current block of data, when you start sum
-#Dat1 <- mutate(Dat1,'CD4 ABS'=rnorm(n(), mean = 900, sd = 250))
-Dat1 <- mutate(Dat1
-               ,'ID' = sprintf("EX-%04d",sample(1:1000,n()))#paste0 removes the space between data
-               ,'CD4 ABS'=round(rnorm(n(), mean = 900, sd = 250))#the complete expression for round:rnorm(n(), mean = 900, sd = 250
-               ,'WBC'=rnorm(n(), mean = 4.9, sd = .26)
-               ,'RBC'=rnorm(n(), mean = 8.7, sd = .24)
-               )
-sprintf("name=%s, age=%d, percentile=%% %f", "Zeke", 39, 98.5)
-#%s means string %d means integer, %f means fraction 
+set.seed(seed) #Use this func to replicate the same vector of random numbers; seed was defined on line 25
+rnorm(nrows, mean=900, sd=250) #Create a single column vector of random values; nrows was defined on line 25
+
+Dat1 <- Dat0[rep(1,nrows),];#Create a new variable from Dat 0 with row 1 repeated nrows times for all columns
+mutate(Dat1, `CD4 ABS`=12) #Modify Dat 1 by replacing all values in column CD4 ABS with '12'
+Dat1 <-mutate(Dat1, `CD4 ABS`=rnorm(n(), mean=900, sd=250)); #Redefine Dat1 by replacing the values in CD4 ABS with random values
+#n() represents the number of rows in the current block of data
+
+Dat1 <-mutate(Dat1
+              ,# across(is.numeric,rnorm) #Across performs a specific action given a condition, across(condition, action)
+              , across(where(is.numeric),~rnorm(n(),mean=.x, sd=1+.x/12))
+              #          #function(){result<-try(rnorm(n(),mean=100, sd=2))
+              #   if(is(result,"try-error")){
+              #     browser()
+              #     } else {result}
+              #})
+              , ID= sprintf("EX-%04d",sample(1:1000,n())) # Zero pad to 4 places with prefix 'EX-'
+              ,`Specimen ID`= sprintf("%03d-%03d-%04d-%d",
+                                      sample(1:100,n(), replace = TRUE),
+                                      sample(1:100,n(),replace = TRUE),
+                                      sample(1:1000,n(),replace = TRUE),
+                                      sample(1:9,n(),replace = TRUE))
+              , PIN=seq_len(n())
+              , `CD4 ABS`=round(rnorm(n(), mean=900, sd=250))
+              , WBC=rnorm(n(), mean=4.9, sd=.26)
+              , RBC=rnorm(n(), mean=8.7, sd=.24)
+)
