@@ -78,3 +78,4 @@ Dat1 <-mutate(Dat1
               , WBC=rnorm(n(), mean=4.9, sd=.26)
               , RBC=rnorm(n(), mean=8.7, sd=.24)
 )
+SummaryDat1 <-summarize(Dat1,`CD4 ABS`=mean(`CD4 ABS`),`CD8 ABS`=mean(`CD8 ABS`))
