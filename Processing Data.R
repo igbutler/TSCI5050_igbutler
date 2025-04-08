@@ -38,4 +38,14 @@ options(max.print=500);
 panderOptions('table.split.table',Inf); panderOptions('table.split.cells',Inf);
 probmissing=c(.99,.01)
 
-##Read in the data, data folder(Simulated Data)
+##Read in the data, data folder(Simulated Data), and play with it
+# import data ----
+datafile <- "Data/Simulated Data.xlsx"
+SimData <- import(datafile) %>% mutate(train=sample(c(TRUE,FALSE),n(),replace = TRUE))
+#SimData <- mutate(SimData,train=sample(c(TRUE,FALSE),n(),replace = TRUE))
+
+
+#Scatter Plot Matrix ----
+select(SimData,!any_of(c("ID","Specimen ID","PIN","VISIT","Notes"))) %>% ggpairs
+
+#slice_sample()
